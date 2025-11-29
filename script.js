@@ -1,9 +1,8 @@
 const frame = document.getElementById("frame");
 
-// your real first and last frame numbers
-let currentFrame = 10;
-const firstFrame = 10;
-const lastFrame = 129;
+let currentFrame = 1;
+const firstFrame = 1;
+const lastFrame = 120;
 
 function updateFrame() {
   frame.src = `frames/Frame${currentFrame}.jpg`;
@@ -16,12 +15,11 @@ window.addEventListener("wheel", (event) => {
     currentFrame--;
   }
 
-  // looping
   if (currentFrame > lastFrame) currentFrame = firstFrame;
   if (currentFrame < firstFrame) currentFrame = lastFrame;
 
   updateFrame();
 });
 
-// load the initial frame
+// load initial frame
 updateFrame();

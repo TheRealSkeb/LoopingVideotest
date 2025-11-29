@@ -1,12 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Scroll Video</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scroll Video</title>
+<style>
+  body, html {
+    margin: 0;
+    height: 200vh; /* to allow scrolling */
+    overflow-x: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #111;
+  }
+  #video-frame {
+    max-width: 100%;
+    max-height: 100vh;
+    display: block;
+  }
+</style>
 </head>
 <body>
-  <img id="frame" src="frames/Frame1.jpg" alt="video frame">
-  <script src="script.js"></script>
+
+<img id="video-frame" src="Frame1.jpg" alt="Video Frame">
+
+<script>
+const totalFrames = 120;
+let frames = [];
+let currentFrame = 1;
+let targetFrame = 1;
+let scrolling = 0;
+
+// Preload all images
+for (let i = 1; i <= totalFrames; i++) {
+  let img = new Image();
+  img.src = `Frame${i}.jpg`;
+  frames.push(img);
+}
+
+// Function to update the image smoothly
+function updateFrame() {
+  if (currentFrame !== targetFrame) {
+    currentFrame += (targetFrame - currentFrame) * 0.1; // smooth lerp
+    let frameToShow = Math.round(currentFrame);
+    if (frameToShow < 1) frameToShow = totalFrames;
+    if (frameToShow > totalFrames) frameToShow = 1;
+    document.getElementById('video-frame').src = frames[frameToShow - 1].src;
+  }
+  requestAnimationFrame(updateFrame);
+}
+
+// Handle scroll
+window.addEventListener('wheel', (e) => {
+  scrolling += e.deltaY * 0.1; // adjust scroll sensitivity
+  targetFrame += scrolling;
+  
+  if (targetFrame < 1) targetFrame += totalFrames;
+  if (targetFrame > totalFrames) targetFrame -= totalFrames;
+
+  scrolling *= 0.8; // momentum damping
+});
+
+updateFrame();
+</script>
+
 </body>
 </html>

@@ -1,10 +1,12 @@
 const frame = document.getElementById("frame");
-const frameCount = 300; // however many JPEGs you have
-let currentFrame = 1;
+
+// your real first and last frame numbers
+let currentFrame = 10;
+const firstFrame = 10;
+const lastFrame = 129;
 
 function updateFrame() {
-  const padded = String(currentFrame).padStart(4, "0");
-  frame.src = `frames/${padded}.jpg`;
+  frame.src = `frames/Frame${currentFrame}.jpg`;
 }
 
 window.addEventListener("wheel", (event) => {
@@ -14,8 +16,12 @@ window.addEventListener("wheel", (event) => {
     currentFrame--;
   }
 
-  if (currentFrame > frameCount) currentFrame = 1;
-  if (currentFrame < 1) currentFrame = frameCount;
+  // looping
+  if (currentFrame > lastFrame) currentFrame = firstFrame;
+  if (currentFrame < firstFrame) currentFrame = lastFrame;
 
   updateFrame();
 });
+
+// load the initial frame
+updateFrame();

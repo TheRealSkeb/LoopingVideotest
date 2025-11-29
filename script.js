@@ -1,11 +1,12 @@
 const totalFrames = 120;
 let currentFrame = 1;
+let velocity = 0;
 
 // Preload frames
 let frames = [];
 for (let i = 1; i <= totalFrames; i++) {
     const img = new Image();
-    img.src = `frames/Frame${i}.jpg`; // <- path fixed!
+    img.src = `frames/Frame${i}.jpg`;
     frames.push(img);
 }
 
@@ -15,17 +16,28 @@ function showFrame(frame) {
     imgEl.src = frames[frame - 1].src;
 }
 
-// Scroll one frame per tick
+// Handle scroll: add to velocity instead of instantly changing frame
 window.addEventListener('wheel', (e) => {
-    e.preventDefault(); // prevent default scroll
+    e.preventDefault();
+    velocity += e.deltaY > 0 ? 1 : -1; // increase or decrease velocity
+}, { passive: false });
 
-    if (e.deltaY > 0) {
-        currentFrame++;
-        if (currentFrame > totalFrames) currentFrame = 1;
-    } else {
-        currentFrame--;
-        if (currentFrame < 1) currentFrame = totalFrames;
+// Animation loop for momentum
+function animate() {
+    if (Math.abs(velocity) > 0.01) { // only move if velocity is noticeable
+        currentFrame += velocity;
+
+        // Loop frames
+        if (currentFrame > totalFrames) currentFrame -= totalFrames;
+        if (currentFrame < 1) currentFrame += totalFrames;
+
+        showFrame(Math.round(currentFrame));
+
+        // Apply damping for momentum
+        velocity *= 0.85; // tweak for faster/slower slowdown
     }
 
-    showFrame(currentFrame);
-}, { passive: false });
+    requestAnimationFrame(animate);
+}
+
+animate();

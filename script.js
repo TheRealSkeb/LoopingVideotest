@@ -8,18 +8,39 @@ function updateFrame() {
   frame.src = `frames/Frame${currentFrame}.jpg`;
 }
 
+let scrollDelta = 0;
+let animating = false;
+
 window.addEventListener("wheel", (event) => {
-  if (event.deltaY > 0) {
+  scrollDelta += event.deltaY;
+  if (!animating) animateScroll();
+});
+
+function animateScroll() {
+  animating = true;
+
+  if (scrollDelta > 20) {
     currentFrame++;
-  } else {
+    scrollDelta = 0;
+  } else if (scrollDelta < -20) {
     currentFrame--;
+    scrollDelta = 0;
   }
 
   if (currentFrame > lastFrame) currentFrame = firstFrame;
   if (currentFrame < firstFrame) currentFrame = lastFrame;
 
   updateFrame();
-});
+
+  requestAnimationFrame(() => {
+    if (Math.abs(scrollDelta) > 1) {
+      animateScroll();
+    } else {
+      animating = false;
+    }
+  });
+}
+
 
 // load initial frame
 updateFrame();

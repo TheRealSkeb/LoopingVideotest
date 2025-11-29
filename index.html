@@ -3,63 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scroll Video Frames</title>
-<style>
-  body, html {
-    margin: 0;
-    height: 100vh;
-    overflow: hidden; /* hide default scroll */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #111;
-  }
-  #video-frame {
-    max-width: 100%;
-    max-height: 100vh;
-    display: block;
-  }
-</style>
+<title>Scroll Video</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<img id="video-frame" src="Frame1.jpg" alt="Video Frame">
+<img id="video-frame" src="frames/Frame1.jpg" alt="Video Frame">
 
-<script>
-const totalFrames = 120;
-let currentFrame = 1;
-
-// Preload frames
-let frames = [];
-for (let i = 1; i <= totalFrames; i++) {
-  const img = new Image();
-  img.src = `Frame${i}.jpg`;
-  frames.push(img);
-}
-
-const imgEl = document.getElementById('video-frame');
-
-function showFrame(frame) {
-  imgEl.src = frames[frame - 1].src;
-}
-
-// Handle scroll: one frame per scroll tick
-window.addEventListener('wheel', (e) => {
-  e.preventDefault(); // prevent default scroll
-
-  if (e.deltaY > 0) {
-    // scroll down
-    currentFrame++;
-    if (currentFrame > totalFrames) currentFrame = 1;
-  } else {
-    // scroll up
-    currentFrame--;
-    if (currentFrame < 1) currentFrame = totalFrames;
-  }
-
-  showFrame(currentFrame);
-}, { passive: false });
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>

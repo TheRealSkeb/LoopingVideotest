@@ -1,54 +1,31 @@
-const frame = document.getElementById("frame");
-
-const firstFrame = 1;
-const lastFrame = 120;
+const totalFrames = 120;
 let currentFrame = 1;
 
-// momentum values
-let velocity = 0;
-let isAnimating = false;
-
-// preload all images
-const images = [];
-for (let i = firstFrame; i <= lastFrame; i++) {
-  const img = new Image();
-  img.src = `frames/Frame${i}.jpg`;
-  images.push(img);
+// Preload frames
+let frames = [];
+for (let i = 1; i <= totalFrames; i++) {
+    const img = new Image();
+    img.src = `frames/Frame${i}.jpg`; // <- path fixed!
+    frames.push(img);
 }
 
-function updateFrame() {
-  frame.src = `frames/Frame${currentFrame}.jpg`;
+const imgEl = document.getElementById('video-frame');
+
+function showFrame(frame) {
+    imgEl.src = frames[frame - 1].src;
 }
 
-function animate() {
-  if (Math.abs(velocity) < 0.01) {
-    velocity = 0;
-    isAnimating = false;
-    return;
-  }
+// Scroll one frame per tick
+window.addEventListener('wheel', (e) => {
+    e.preventDefault(); // prevent default scroll
 
-  currentFrame += velocity;
+    if (e.deltaY > 0) {
+        currentFrame++;
+        if (currentFrame > totalFrames) currentFrame = 1;
+    } else {
+        currentFrame--;
+        if (currentFrame < 1) currentFrame = totalFrames;
+    }
 
-  // wrap around loop
-  if (currentFrame > lastFrame) currentFrame = firstFrame;
-  if (currentFrame < firstFrame) currentFrame = lastFrame;
-
-  updateFrame();
-
-  // friction for momentum fade-out
-  velocity *= 0.92;
-
-  requestAnimationFrame(animate);
-}
-
-window.addEventListener("wheel", (event) => {
-  // scroll speed factor, tweak to taste
-  const scrollForce = event.deltaY * 0.02;
-
-  velocity += scrollForce;
-
-  if (!isAnimating) {
-    isAnimating = true;
-    requestAnimationFrame(animate);
-  }
-});
+    showFrame(currentFrame);
+}, { passive: false });

@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scroll Video</title>
+<title>Scroll Video Frames</title>
 <style>
   body, html {
     margin: 0;
-    height: 200vh; /* to allow scrolling */
-    overflow-x: hidden;
+    height: 100vh;
+    overflow: hidden; /* hide default scroll */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -27,42 +27,38 @@
 
 <script>
 const totalFrames = 120;
-let frames = [];
 let currentFrame = 1;
-let targetFrame = 1;
-let scrolling = 0;
 
-// Preload all images
+// Preload frames
+let frames = [];
 for (let i = 1; i <= totalFrames; i++) {
-  let img = new Image();
+  const img = new Image();
   img.src = `Frame${i}.jpg`;
   frames.push(img);
 }
 
-// Function to update the image smoothly
-function updateFrame() {
-  if (currentFrame !== targetFrame) {
-    currentFrame += (targetFrame - currentFrame) * 0.1; // smooth lerp
-    let frameToShow = Math.round(currentFrame);
-    if (frameToShow < 1) frameToShow = totalFrames;
-    if (frameToShow > totalFrames) frameToShow = 1;
-    document.getElementById('video-frame').src = frames[frameToShow - 1].src;
-  }
-  requestAnimationFrame(updateFrame);
+const imgEl = document.getElementById('video-frame');
+
+function showFrame(frame) {
+  imgEl.src = frames[frame - 1].src;
 }
 
-// Handle scroll
+// Handle scroll: one frame per scroll tick
 window.addEventListener('wheel', (e) => {
-  scrolling += e.deltaY * 0.1; // adjust scroll sensitivity
-  targetFrame += scrolling;
-  
-  if (targetFrame < 1) targetFrame += totalFrames;
-  if (targetFrame > totalFrames) targetFrame -= totalFrames;
+  e.preventDefault(); // prevent default scroll
 
-  scrolling *= 0.8; // momentum damping
-});
+  if (e.deltaY > 0) {
+    // scroll down
+    currentFrame++;
+    if (currentFrame > totalFrames) currentFrame = 1;
+  } else {
+    // scroll up
+    currentFrame--;
+    if (currentFrame < 1) currentFrame = totalFrames;
+  }
 
-updateFrame();
+  showFrame(currentFrame);
+}, { passive: false });
 </script>
 
 </body>
